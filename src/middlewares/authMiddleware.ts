@@ -32,4 +32,7 @@ const authMiddleware =
       throw error
     }
   }
+
+export type ResponseWithAuth = Response<unknown, { user: UserJWTPayload }>
+
 export default authMiddleware
