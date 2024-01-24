@@ -1,23 +1,25 @@
 import { existsSync } from 'fs'
-import { unlink } from 'fs/promises'
+import { unlink, writeFile } from 'fs/promises'
 import mysql, { type ResultSetHeader, type RowDataPacket } from 'mysql2/promise'
 import { join } from 'path'
 import { poolOptions } from '../../config/config.db.js'
 import { config } from '../../config/config.env.js'
 import ApiError from '../../exceptions/apiError.js'
-import { splitFilename } from '../../utils/files.js'
+import { splitFilenameWithRandomSuffix } from '../../utils/files.js'
 import { FileDto, FileSchema } from './files.model.js'
 
 const pool = mysql.createPool(poolOptions)
 
 const filesService = {
-  async upload({ filename, mimetype, size }: Express.Multer.File) {
-    const { name, extension } = splitFilename(filename)
+  async upload({ originalname, mimetype, size, buffer }: Express.Multer.File) {
+    const { name, extension } = splitFilenameWithRandomSuffix(originalname)
     const connection = await pool.getConnection()
     await connection.execute(
       'INSERT INTO `files`(`name`, `extension`, `mimetype`, `size`) VALUES (?, ?, ?, ?)',
       [name, extension, mimetype, size],
     )
+    const filePath = join(config.UPLOADS_PATH, `${name}${extension}`)
+    await writeFile(filePath, buffer)
   },
 
   async getFiles(listSize: number, page: number) {

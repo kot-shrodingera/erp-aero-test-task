@@ -1,30 +1,20 @@
 import { Router } from 'express'
 import asyncHandler from 'express-async-handler'
-import multer, { diskStorage } from 'multer'
-import { config } from '../../config/config.env.js'
+import multer, { memoryStorage } from 'multer'
 import authMiddleware from '../../middlewares/authMiddleware.js'
 import validate from '../../middlewares/validateMiddleware.js'
-import { splitFilename } from '../../utils/files.js'
 import filesController from './files.controller.js'
 import {
   deleteFilesSchema,
   downloadFileSchema,
   getFileSchema,
   getFilesSchema,
+  updateFileSchema,
 } from './files.schemas.js'
 
 const filesRouter = Router()
 
-const storage = diskStorage({
-  destination: config.UPLOADS_PATH,
-  filename: (req, file, callback) => {
-    const { name, extension } = splitFilename(file.originalname)
-    const uniqueSuffix = Math.round(Math.random() * 1e4)
-      .toString()
-      .padStart(4, '0')
-    callback(null, `${name}-${uniqueSuffix}${extension}`)
-  },
-})
+const storage = memoryStorage()
 
 const upload = multer({ storage })
 
