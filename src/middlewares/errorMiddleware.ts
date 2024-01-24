@@ -18,6 +18,15 @@ const errorMiddleware = (
     response.status(error.status).json({
       message: error.message,
     })
+  } else if (error instanceof z.ZodError) {
+    response.status(422).json({
+      message: error.issues
+        .map((issue) => {
+          const path = issue.path.join('.')
+          return `[${path}]: ${issue.message}`
+        })
+        .join('\n'),
+    })
   } else {
     const safeParseResult = withMessageSchema.safeParse(error)
     if (safeParseResult.success) {
