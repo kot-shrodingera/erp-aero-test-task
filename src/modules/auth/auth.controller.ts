@@ -62,6 +62,19 @@ const authController = {
       accessToken,
     })
   },
+
+  logout: async (request: Request, response: Response) => {
+    const { refreshToken } = cookiesSchema.parse(request.cookies)
+    await authService.logout(refreshToken)
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true,
+    })
+    response.json({
+      message: 'Logged out successfuly',
+    })
+  },
 }
 
 export default authController

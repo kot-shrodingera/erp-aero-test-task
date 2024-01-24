@@ -1,5 +1,5 @@
 import { compareSync, hashSync } from 'bcrypt'
-import mysql from 'mysql2/promise'
+import mysql, { type ResultSetHeader } from 'mysql2/promise'
 import { poolOptions } from '../../config/config.db.js'
 import ApiError from '../../exceptions/apiError.js'
 import tokenService from '../tokens/tokens.service.js'
@@ -51,7 +51,7 @@ const authService = {
     const user = await userService.getUserByRefreshToken(refreshToken)
     if (!user) {
       throw ApiError.BadRequest(
-        `User with refresh token ${refreshToken} not found`,
+        `User with refresh token "${refreshToken}" not found`,
       )
     }
     const userDto = new UserDto(user)
@@ -60,6 +60,19 @@ const authService = {
     return {
       accessToken,
       user: userDto,
+    }
+  },
+
+  async logout(refreshToken: string) {
+    const connection = await pool.getConnection()
+    const [result] = await connection.execute<ResultSetHeader>(
+      'UPDATE `users` SET `refresh_token` = NULL WHERE `refresh_token` = ? LIMIT 1',
+      [refreshToken],
+    )
+    if (result.affectedRows === 0) {
+      throw ApiError.BadRequest(
+        `User with refresh token "${refreshToken}" not found`,
+      )
     }
   },
 }
