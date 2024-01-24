@@ -11,8 +11,8 @@ import { FileDto, FileSchema } from './files.model.js'
 const pool = mysql.createPool(poolOptions)
 
 const filesService = {
-  async upload({ originalname, mimetype, size }: Express.Multer.File) {
-    const { name, extension } = splitFilename(originalname)
+  async upload({ filename, mimetype, size }: Express.Multer.File) {
+    const { name, extension } = splitFilename(filename)
     const connection = await pool.getConnection()
     await connection.execute(
       'INSERT INTO `files`(`name`, `extension`, `mimetype`, `size`) VALUES (?, ?, ?, ?)',

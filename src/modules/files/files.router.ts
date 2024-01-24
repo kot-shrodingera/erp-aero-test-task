@@ -1,12 +1,10 @@
 import { Router } from 'express'
 import asyncHandler from 'express-async-handler'
-import { existsSync } from 'fs'
 import multer, { diskStorage } from 'multer'
-import { join } from 'path'
 import { config } from '../../config/config.env.js'
-import ApiError from '../../exceptions/apiError.js'
 import authMiddleware from '../../middlewares/authMiddleware.js'
 import validate from '../../middlewares/validateMiddleware.js'
+import { splitFilename } from '../../utils/files.js'
 import filesController from './files.controller.js'
 import {
   deleteFilesSchema,
@@ -20,20 +18,15 @@ const filesRouter = Router()
 const storage = diskStorage({
   destination: config.UPLOADS_PATH,
   filename: (req, file, callback) => {
-    callback(null, file.originalname)
+    const { name, extension } = splitFilename(file.originalname)
+    const uniqueSuffix = Math.round(Math.random() * 1e4)
+      .toString()
+      .padStart(4, '0')
+    callback(null, `${name}-${uniqueSuffix}${extension}`)
   },
 })
 
-const fileFilter: multer.Options['fileFilter'] = (request, file, callback) => {
-  const filePath = join(config.UPLOADS_PATH, file.originalname)
-  if (existsSync(filePath)) {
-    callback(ApiError.BadRequest(`File ${file.originalname} already exists`))
-  } else {
-    callback(null, true)
-  }
-}
-
-const upload = multer({ storage: storage, fileFilter })
+const upload = multer({ storage })
 
 filesRouter.post(
   '/upload',
