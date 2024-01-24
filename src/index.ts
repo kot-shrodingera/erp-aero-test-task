@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser'
 import express, { json } from 'express'
 import { config } from './config/config.env.js'
 import errorMiddleware from './middlewares/errorMiddleware.js'
@@ -7,6 +8,7 @@ const app = express()
 const { SV_PORT } = config
 
 app.use(json())
+app.use(cookieParser())
 app.use('/', authRouter)
 app.use(errorMiddleware)
 
