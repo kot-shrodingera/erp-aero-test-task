@@ -1,7 +1,11 @@
 import type { Request, Response } from 'express'
 import ApiError from '../../exceptions/apiError.js'
 import type { ValidatedRequest } from '../../types.js'
-import type { DeleteFilesSchema, GetFilesSchema } from './files.schemas.js'
+import type {
+  DeleteFilesSchema,
+  GetFileSchema,
+  GetFilesSchema,
+} from './files.schemas.js'
 import filesService from './files.service.js'
 
 const filesController = {
@@ -25,6 +29,18 @@ const filesController = {
       : 10
     const page = request.query.page ? Number(request.query.page) : 1
     const result = await filesService.getFiles(listSize, page)
+    response.json(result)
+  },
+
+  getFile: async (
+    request: ValidatedRequest<GetFileSchema>,
+    response: Response,
+  ) => {
+    const id = Number(request.params.id)
+    const result = await filesService.getFile(id)
+    if (result === null) {
+      throw ApiError.BadRequest(`File with id ${id} not found`)
+    }
     response.json(result)
   },
 
