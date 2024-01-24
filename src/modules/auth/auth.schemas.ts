@@ -8,7 +8,7 @@ export const signupSchema = z.object({
   body: z.object({
     id: z
       .string()
-      .email()
+      .email('id must be phone number or email')
       .or(z.string().regex(/^\+?\d{10,15}$/)),
     password: z.string(),
   }),
