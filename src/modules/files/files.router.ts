@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler'
 import { existsSync } from 'fs'
 import multer, { diskStorage } from 'multer'
 import { join } from 'path'
+import { config } from '../../config/config.env.js'
 import ApiError from '../../exceptions/apiError.js'
 import authMiddleware from '../../middlewares/authMiddleware.js'
 import validate from '../../middlewares/validateMiddleware.js'
@@ -11,17 +12,15 @@ import { getFilesSchema } from './files.schemas.js'
 
 const filesRouter = Router()
 
-const uploadsPath = 'uploads/'
-
 const storage = diskStorage({
-  destination: uploadsPath,
+  destination: config.UPLOADS_PATH,
   filename: (req, file, callback) => {
     callback(null, file.originalname)
   },
 })
 
 const fileFilter: multer.Options['fileFilter'] = (request, file, callback) => {
-  const filePath = join(uploadsPath, file.originalname)
+  const filePath = join(config.UPLOADS_PATH, file.originalname)
   if (existsSync(filePath)) {
     callback(ApiError.BadRequest(`File ${file.originalname} already exists`))
   } else {

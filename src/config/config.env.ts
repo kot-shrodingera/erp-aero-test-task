@@ -18,6 +18,7 @@ const envSchema = z.object({
   DB_DATABASE: z.string().default('test'),
   JWT_ACCESS_SECRET: z.string(),
   JWT_REFRESH_SECRET: z.string(),
+  UPLOADS_PATH: z.string().default('uploads/'),
 })
 
 export const config = envSchema.parse(process.env)
