@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
-import ApiError from '../exceptions/apiError.js'
 import * as z from 'zod'
+import ApiError from '../exceptions/apiError.js'
 
 const withMessageSchema = z.object({
   message: z.string(),
