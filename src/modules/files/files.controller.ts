@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import ApiError from '../../exceptions/apiError.js'
 import type { ValidatedRequest } from '../../types.js'
-import type { GetFilesSchema } from './files.schemas.js'
+import type { DeleteFilesSchema, GetFilesSchema } from './files.schemas.js'
 import filesService from './files.service.js'
 
 const filesController = {
@@ -26,6 +26,17 @@ const filesController = {
     const page = request.query.page ? Number(request.query.page) : 1
     const result = await filesService.getFiles(listSize, page)
     response.json(result)
+  },
+
+  deleteFile: async (
+    request: ValidatedRequest<DeleteFilesSchema>,
+    response: Response,
+  ) => {
+    const id = Number(request.params.id)
+    await filesService.deleteFile(id)
+    response.json({
+      message: `File with id ${id} successfully deleted`,
+    })
   },
 }
 

@@ -8,7 +8,7 @@ import ApiError from '../../exceptions/apiError.js'
 import authMiddleware from '../../middlewares/authMiddleware.js'
 import validate from '../../middlewares/validateMiddleware.js'
 import filesController from './files.controller.js'
-import { getFilesSchema } from './files.schemas.js'
+import { deleteFilesSchema, getFilesSchema } from './files.schemas.js'
 
 const filesRouter = Router()
 
@@ -42,6 +42,13 @@ filesRouter.get(
   authMiddleware(),
   validate(getFilesSchema),
   asyncHandler(filesController.getFiles),
+)
+
+filesRouter.delete(
+  '/delete/:id',
+  authMiddleware(),
+  validate(deleteFilesSchema),
+  asyncHandler(filesController.deleteFile),
 )
 
 export default filesRouter
