@@ -1,5 +1,6 @@
-import type { Response } from 'express'
+import type { Request, Response } from 'express'
 // import { config } from '../../config/config.env.js'
+import type { ResponseWithAuth } from '../../middlewares/authMiddleware.js'
 import type { ValidatedRequest } from '../../types.js'
 import type { SigninSchema, SignupSchema } from './auth.schemas.js'
 import authService from './auth.service.js'
@@ -38,6 +39,13 @@ const authController = {
     response.json({
       user,
       accessToken,
+    })
+  },
+
+  info: (request: Request, response: ResponseWithAuth) => {
+    const { id } = response.locals.user
+    response.json({
+      id,
     })
   },
 }

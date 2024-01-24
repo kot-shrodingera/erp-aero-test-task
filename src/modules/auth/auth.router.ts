@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import asyncHandler from 'express-async-handler'
+import authMiddleware from '../../middlewares/authMiddleware.js'
 import validate from '../../middlewares/validateMiddleware.js'
 import authController from './auth.controller.js'
 import { signinSchema, signupSchema } from './auth.schemas.js'
@@ -17,5 +18,7 @@ authRouter.post(
   validate(signinSchema),
   asyncHandler(authController.signin),
 )
+
+authRouter.get('/info', authMiddleware(), authController.info)
 
 export default authRouter
