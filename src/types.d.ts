@@ -7,8 +7,8 @@ type ValidateSchema = {
 }
 
 export type ValidatedRequest<T extends ValidateSchema> = Request<
-  T extends { params: unknown } ? T['params'] : never,
+  T extends { params: unknown } ? Request['params'] & T['params'] : never,
   never,
   T extends { body: unknown } ? T['body'] : never,
-  T extends { query: unknown } ? T['query'] : never
+  T extends { query: unknown } ? Request['query'] & T['query'] : never
 >
