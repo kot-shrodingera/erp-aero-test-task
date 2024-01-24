@@ -1,12 +1,14 @@
-import express from 'express'
+import express, { json } from 'express'
 import { config } from './config/config.env.js'
+import errorMiddleware from './middlewares/errorMiddleware.js'
+import authRouter from './modules/auth/auth.router.js'
 
 const app = express()
 const { SV_PORT } = config
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.use(json())
+app.use('/', authRouter)
+app.use(errorMiddleware)
 
 app.listen(SV_PORT, () => {
   console.log(`Example app listening on port ${SV_PORT}`)
