@@ -17,6 +17,19 @@ const userService = {
     const user = UserSchema.parse(rows[0])
     return user
   },
+
+  async getUserByRefreshToken(refreshToken: string) {
+    const connection = await pool.getConnection()
+    const [rows] = await connection.execute<RowDataPacket[]>(
+      'SELECT * FROM users WHERE refresh_token = ?',
+      [refreshToken],
+    )
+    if (rows.length === 0) {
+      return null
+    }
+    const user = UserSchema.parse(rows[0])
+    return user
+  },
 }
 
 export default userService
