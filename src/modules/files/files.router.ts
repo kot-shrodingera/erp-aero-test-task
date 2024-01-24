@@ -10,6 +10,7 @@ import validate from '../../middlewares/validateMiddleware.js'
 import filesController from './files.controller.js'
 import {
   deleteFilesSchema,
+  downloadFileSchema,
   getFileSchema,
   getFilesSchema,
 } from './files.schemas.js'
@@ -60,6 +61,13 @@ filesRouter.delete(
   authMiddleware(),
   validate(deleteFilesSchema),
   asyncHandler(filesController.deleteFile),
+)
+
+filesRouter.get(
+  '/download/:id',
+  authMiddleware(),
+  validate(downloadFileSchema),
+  asyncHandler(filesController.downloadFile),
 )
 
 export default filesRouter

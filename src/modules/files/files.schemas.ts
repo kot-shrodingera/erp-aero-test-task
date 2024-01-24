@@ -30,3 +30,11 @@ export const deleteFilesSchema = z.object({
 })
 
 export type DeleteFilesSchema = z.infer<typeof deleteFilesSchema>
+
+export const downloadFileSchema = z.object({
+  params: z.object({
+    id: z.string().refine((value) => !isNaN(Number(value)), 'Not a number'),
+  }),
+})
+
+export type DownloadFileSchema = z.infer<typeof downloadFileSchema>

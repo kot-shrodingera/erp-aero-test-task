@@ -3,6 +3,7 @@ import ApiError from '../../exceptions/apiError.js'
 import type { ValidatedRequest } from '../../types.js'
 import type {
   DeleteFilesSchema,
+  DownloadFileSchema,
   GetFileSchema,
   GetFilesSchema,
 } from './files.schemas.js'
@@ -53,6 +54,15 @@ const filesController = {
     response.json({
       message: `File with id ${id} successfully deleted`,
     })
+  },
+
+  downloadFile: async (
+    request: ValidatedRequest<DownloadFileSchema>,
+    response: Response,
+  ) => {
+    const id = Number(request.params.id)
+    const filePath = await filesService.getFilePath(id)
+    response.download(filePath)
   },
 }
 

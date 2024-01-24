@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { unlink } from 'fs/promises'
 import mysql, { type ResultSetHeader, type RowDataPacket } from 'mysql2/promise'
 import { join } from 'path'
@@ -43,11 +44,11 @@ const filesService = {
   },
 
   async deleteFile(id: number) {
-    const connection = await pool.getConnection()
     const file = await this.getFile(id)
     if (file === null) {
       throw ApiError.BadRequest(`No file with id ${id} found`)
     }
+    const connection = await pool.getConnection()
     const [deleted] = await connection.execute<ResultSetHeader>(
       'DELETE FROM `files` WHERE id = ? LIMIT 1',
       [id],
@@ -58,6 +59,19 @@ const filesService = {
     const filename = `${file.name}${file.extension}`
     const filePath = join(config.UPLOADS_PATH, filename)
     await unlink(filePath)
+  },
+
+  async getFilePath(id: number) {
+    const file = await this.getFile(id)
+    if (file === null) {
+      throw ApiError.BadRequest(`No file with id ${id} found`)
+    }
+    const filename = `${file.name}${file.extension}`
+    const filePath = join(config.UPLOADS_PATH, filename)
+    if (!existsSync(filePath)) {
+      throw new ApiError(500, `Local file with id ${id} not found`)
+    }
+    return filePath
   },
 }
 
