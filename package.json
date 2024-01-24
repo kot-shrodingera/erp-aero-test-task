@@ -4,6 +4,7 @@
   "type": "module",
   "main": "./src/index.ts",
   "scripts": {
+    "eslint": "eslint .",
     "build": "pnpm tsc",
     "ts-node": "node --loader ts-node/esm .",
     "tsx-watch": "tsx watch ."
