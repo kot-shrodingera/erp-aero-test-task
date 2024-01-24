@@ -46,6 +46,22 @@ const authService = {
       user: userDto,
     }
   },
+
+  async refresh(refreshToken: string) {
+    const user = await userService.getUserByRefreshToken(refreshToken)
+    if (!user) {
+      throw ApiError.BadRequest(
+        `User with refresh token ${refreshToken} not found`,
+      )
+    }
+    const userDto = new UserDto(user)
+    // jwt exprects POJOs, not classes
+    const accessToken = tokenService.generateAccessToken({ ...userDto })
+    return {
+      accessToken,
+      user: userDto,
+    }
+  },
 }
 
 export default authService

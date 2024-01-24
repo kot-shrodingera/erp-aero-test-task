@@ -2,7 +2,11 @@ import type { Request, Response } from 'express'
 // import { config } from '../../config/config.env.js'
 import type { ResponseWithAuth } from '../../middlewares/authMiddleware.js'
 import type { ValidatedRequest } from '../../types.js'
-import type { SigninSchema, SignupSchema } from './auth.schemas.js'
+import {
+  cookiesSchema,
+  type SigninSchema,
+  type SignupSchema,
+} from './auth.schemas.js'
 import authService from './auth.service.js'
 
 const authController = {
@@ -46,6 +50,16 @@ const authController = {
     const { id } = response.locals.user
     response.json({
       id,
+    })
+  },
+
+  refresh: async (request: Request, response: Response) => {
+    const { refreshToken } = cookiesSchema.parse(request.cookies)
+    const { accessToken, user } = await authService.refresh(refreshToken)
+    response.json({
+      message: 'accessToken successfuly updated',
+      user,
+      accessToken,
     })
   },
 }

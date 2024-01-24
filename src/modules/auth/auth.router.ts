@@ -21,4 +21,6 @@ authRouter.post(
 
 authRouter.get('/info', authMiddleware(), authController.info)
 
+authRouter.post('/signin/new_token', asyncHandler(authController.refresh))
+
 export default authRouter

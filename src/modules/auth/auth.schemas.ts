@@ -1,5 +1,9 @@
 import * as z from 'zod'
 
+export const cookiesSchema = z.object({
+  refreshToken: z.string(),
+})
+
 export const signupSchema = z.object({
   body: z.object({
     id: z
