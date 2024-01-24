@@ -11,3 +11,14 @@ export const splitFilename = (filename: string) => {
     extension: filename.substring(index),
   }
 }
+
+export const splitFilenameWithRandomSuffix = (filename: string) => {
+  const { name, extension } = splitFilename(filename)
+  const uniqueSuffix = Math.round(Math.random() * 1e4)
+    .toString()
+    .padStart(4, '0')
+  return {
+    name: `${name}-${uniqueSuffix}`,
+    extension,
+  }
+}
