@@ -6,6 +6,7 @@ import type {
   DownloadFileSchema,
   GetFileSchema,
   GetFilesSchema,
+  UpdateFileSchema,
 } from './files.schemas.js'
 import filesService from './files.service.js'
 
@@ -63,6 +64,21 @@ const filesController = {
     const id = Number(request.params.id)
     const filePath = await filesService.getFilePath(id)
     response.download(filePath)
+  },
+
+  updateFile: async (
+    request: ValidatedRequest<UpdateFileSchema>,
+    response: Response,
+  ) => {
+    const file = request.file
+    if (!file) {
+      throw new ApiError(500, 'Error uploading file')
+    }
+    const id = Number(request.params.id)
+    await filesService.updateFile(id, file)
+    response.json({
+      message: `File with id ${id} updated successfully`,
+    })
   },
 }
 

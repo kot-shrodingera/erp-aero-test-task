@@ -53,4 +53,12 @@ filesRouter.get(
   asyncHandler(filesController.downloadFile),
 )
 
+filesRouter.put(
+  '/update/:id',
+  authMiddleware(),
+  upload.single('file'),
+  validate(updateFileSchema),
+  asyncHandler(filesController.updateFile),
+)
+
 export default filesRouter

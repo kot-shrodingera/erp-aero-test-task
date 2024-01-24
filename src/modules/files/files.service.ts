@@ -75,6 +75,27 @@ const filesService = {
     }
     return filePath
   },
+
+  async updateFile(
+    id: number,
+    { originalname, mimetype, size, buffer }: Express.Multer.File,
+  ) {
+    const file = await this.getFile(id)
+    if (file === null) {
+      throw ApiError.BadRequest(`No file with id ${id} found`)
+    }
+    const oldFilename = `${file.name}${file.extension}`
+    const oldFilePath = join(config.UPLOADS_PATH, oldFilename)
+    await unlink(oldFilePath)
+    const { name, extension } = splitFilenameWithRandomSuffix(originalname)
+    const connection = await pool.getConnection()
+    await connection.execute(
+      'UPDATE `files` SET `name` = ?, `extension` = ?, `mimetype` = ?, `size` = ?, `upload_time` = CURRENT_TIMESTAMP LIMIT 1',
+      [name, extension, mimetype, size],
+    )
+    const newFilePath = join(config.UPLOADS_PATH, `${name}${extension}`)
+    await writeFile(newFilePath, buffer)
+  },
 }
 
 export default filesService

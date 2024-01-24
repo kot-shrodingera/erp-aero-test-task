@@ -38,3 +38,11 @@ export const downloadFileSchema = z.object({
 })
 
 export type DownloadFileSchema = z.infer<typeof downloadFileSchema>
+
+export const updateFileSchema = z.object({
+  params: z.object({
+    id: z.string().refine((value) => !isNaN(Number(value)), 'Not a number'),
+  }),
+})
+
+export type UpdateFileSchema = z.infer<typeof updateFileSchema>
